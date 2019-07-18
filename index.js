@@ -1,7 +1,12 @@
+var bodyParser = require('body-parser');
+
 const express = require('express'),
       app     = express(),
       port    = process.env.PORT || 8095,
       routes  = require('./routes/routes');
+
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 
 app.use( '/', routes );
 
