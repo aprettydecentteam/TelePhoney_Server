@@ -8,9 +8,32 @@ router.get('/', (req, res) => {
 });
 
 router.post('/', (req, res) => {
-    console.log(req.body);
-    console.log("Pong");
-    res.status(200).end();
+    console.log(req.body)
+    console.log("Pong")
+
+    var state;
+
+    if (req.body.action == "TEST") {
+        state = { state: "YUH", almonds: "ACTIVATED" };
+    }
+    else {
+        state = { state: "BRUH", almonds: "ROASTED" };
+    }
+
+    res.send(JSON.stringify(state));
+})
+
+router.ws('/test', (ws, req) => {
+    ws.send(JSON.stringify({ connection: "established" }));
+
+    ws.onmessage = (msg) => {
+        console.log(msg.data)
+        ws.send("I see you said '" + msg.data + "'")
+    }
+
+    ws.onclose = () => {
+        console.log('WebSocket was closed')
+    }
 });
 
 module.exports = router;
