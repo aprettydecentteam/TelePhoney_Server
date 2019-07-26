@@ -4,8 +4,8 @@ const express   = require('express'),
 //helper modules
 const _ = require('lodash');
 //managers
-const sessionManager    = require('./managers/sessionManager'),
-      userManager       = require('./managers/userManager');
+const sessionManager    = require('../managers/sessionManager'),
+      userManager       = require('../managers/userManager');
 
 router.get( '/', ( req, res ) => {
     console.log("Ping");
@@ -50,11 +50,12 @@ router.ws( '/joinSession', async ( ws, req ) => {
     try {
         //we want the playerId here because this was made by the server
         //this acts as the "authentication" in our prototype
-        let session = await sessionManager.joinSession( ws, req.playerId )
+        let session = await sessionManager.joinSession( ws, req.playerId );
 
-        ws.send("Connected to session")
+        ws.send("Connected to session");
+        ws.send( session )
     } catch ( e ) {
-        ws.send("Sorry, there was an error joining the session.")
+        ws.send("Sorry, there was an error joining the session.");
         ws.terminate();
     }
 });

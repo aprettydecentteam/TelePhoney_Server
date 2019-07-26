@@ -1,3 +1,4 @@
+'use strict';
 const uuid   = require('uuid/v4'),
       _      = require('lodash'),
       moment = require('moment');
@@ -8,7 +9,7 @@ const userListPath = './data/userList.dat';
 
 const lookupUser = async ( playerName ) => {
     try {
-        //replace with getUserCollection
+        //TODO replace with getUserCollection
         return await fs.open( userListPath, 'a+', async ( err, fd ) => {
             if( err )
                 throw err;
