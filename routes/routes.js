@@ -19,7 +19,7 @@ router.post( '/', ( req, res ) => {
 });
 
 router.ws( '/test', ( ws, req ) => {
-    ws.send('Connection established!');
+    ws.send( 'Connection established!' );
 
     ws.onmessage = (msg) => {
         console.log( msg.data );
@@ -27,14 +27,16 @@ router.ws( '/test', ( ws, req ) => {
     };
 
     ws.onclose = () => {
-        console.log('WebSocket was closed');
+        console.log( 'WebSocket was closed' );
     };
 });
 
 router.post( '/newPlayer', async ( req, res ) => {
+    console.log( 'playerName', req.body.playerName );
     let playerName = req.body.playerName;
     try {
-        res.json( await userManager.lookupUser(playerName) );
+        let player = await userManager.lookupUser( playerName );
+        res.json( player );
     } catch ( e ) {
         res.status(500).json( {error: e} );
     }
@@ -44,7 +46,7 @@ router.ws( '/joinSession', async ( ws, req ) => {
     ws.send("Finding a session to join...");
 
     ws.onclose = () => {
-      sessionManager.closeSession( ws.getWSS().clients, req.playerId );
+      sessionManager.closeSession( ws.getWSS().clients, req.body.playerId );
     };
 
     try {
