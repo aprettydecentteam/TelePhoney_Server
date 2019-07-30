@@ -260,11 +260,12 @@ router.post( '/initreceiverdemo', ( req, res ) => {
         eventMessage.verbs = req.body.verbs;
         eventMessage.nouns = req.body.nouns;
         eventMessage.mesEvent = "initCypher";
-        serialMessage = JSON.stringify(eventMessage);
+        //serialMessage = JSON.stringify(eventMessage);
 
         clients.forEach(element => {
+            console.log(element);
             if (element.role === "Receiver") {
-                element.ws.send(serialMessage);
+                element.ws.send(eventMessage);
             }
         });
     } catch ( e ) {
