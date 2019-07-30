@@ -168,7 +168,7 @@ router.ws( '/connectdemo', async ( ws, req ) => {
     ws.send(JSON.stringify(connectMessage));
 });
 
-router.post( '/roledemo', async ( req, res ) => {
+router.post( '/roledemo', ( req, res ) => {
     console.log("assigning role");
     clients[req.body.id].role = req.body.role;
     res.status(200).json(clients[req.body.id]);
