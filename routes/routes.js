@@ -265,7 +265,7 @@ router.post( '/initreceiverdemo', ( req, res ) => {
         clients.forEach(element => {
             console.log(element);
             if (element.role === "Receiver") {
-                element.ws.send(eventMessage);
+                element.send(eventMessage);
             }
         });
     } catch ( e ) {
