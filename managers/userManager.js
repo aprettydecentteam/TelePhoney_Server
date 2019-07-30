@@ -1,4 +1,4 @@
-'user strict';
+'use strict';
 const uuid   = require('uuid/v4'),
       _      = require('lodash'),
       moment = require('moment');
