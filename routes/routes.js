@@ -183,6 +183,7 @@ router.post( '/sendmessagedemo', ( req, res ) => {
         eventMessage.step = req.body.step;
         eventMessage.mesEvent = "sentMessage";
         serialMessage = JSON.stringify(eventMessage);
+        console.log(JSON.stringify(clients[req.body.id].role));
         switch(clients[req.body.id].role) {
             case "Sender":
                 console.log("Sender sent message to Saboteur!");
