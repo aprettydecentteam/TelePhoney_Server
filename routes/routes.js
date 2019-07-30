@@ -2,7 +2,8 @@
 const express   = require('express'),
       router    = express.Router();
 //helper modules
-const _ = require('lodash');
+const _     = require('lodash'),
+      uuid  = require('uuid/v4');
 //managers
 const sessionManager    = require('../managers/sessionManager'),
       userManager       = require('../managers/userManager');
@@ -89,7 +90,9 @@ router.post( '/sendMessage', async ( req, res ) => {
     }
 });
 
+let clients = [];
 router.ws( '/connect', async ( ws, req ) => {
+    clients.push(ws);
     let playerID;
     let joinSessionMessage = {};
     let connectMessage = {};
@@ -99,10 +102,11 @@ router.ws( '/connect', async ( ws, req ) => {
     ws.send(JSON.stringify(connectMessage));
 
     ws.onclose = () => {
-      sessionManager.closeSession( ws.getWSS().clients, playerID );
+      sessionManager.closeSession( clients, playerID );
     };
 
-    ws.onmessage = (msg) => {
+    ws.onmessage = async msg => {
+        console.log(msg.data);
         //we want the playerId here because this was made by the server
         //this acts as the "authentication" in our prototype
         let request = JSON.parse(msg.data);
@@ -135,6 +139,7 @@ router.ws( '/connect', async ( ws, req ) => {
                 }
 
             } catch ( e ) {
+                console.log( e );
                 ws.send("Sorry, there was an error joining the session.");
                 ws.terminate();
             }
