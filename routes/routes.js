@@ -212,8 +212,7 @@ router.post( '/sendmessagedemo', ( req, res ) => {
         console.log("message sent was: " + serialMessage);
         recevSocket.send(serialMessage);
     } catch ( e ) {
-        console.log("An error occured");
-        res.status(500).json( {error: e} );
+        console.log("An error occured: " + JSON.stringify(e));
     }
 });
 
