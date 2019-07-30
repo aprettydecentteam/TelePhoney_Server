@@ -94,7 +94,12 @@ let clients = [];
 router.ws( '/connect', async ( ws, req ) => {
     clients.push(ws);
     let playerID;
-    ws.send("Finding a session to join...");
+    let joinSessionMessage = {};
+    let connectMessage = {};
+    let sessionStartMessage = {};
+    let serialMessage = "";
+    connectMessage.msgEvent = "searchingForSession";
+    ws.send(JSON.stringify(connectMessage));
 
     ws.onclose = () => {
       sessionManager.closeSession( clients, playerID );
@@ -108,12 +113,31 @@ router.ws( '/connect', async ( ws, req ) => {
         if (request.reqEvent = "joinSession")
         {
             try {
-                console.log("PlayerID: ", request.playerId);
                 playerID = request.playerId;
-                let session = await sessionManager.joinSession( ws, playerID );
-                console.log("sessionId: ", session );
-                ws.send("Connected to session");
-                ws.send( session )
+                joinSessionMessage.sessionId = sessionManager.joinSession( ws, playerID );
+                joinSessionMessage.msgEvent = "joinedSession";
+                serialMessage = JSON.stringify(joinSessionMessage);
+                ws.send( serialMessage )
+
+                if (sessions[session].players.length == 3) {
+                    try {
+                        sessionStartMessage.mesEvent = "sessionStart";
+                        sessionStartMessage.sessionRole = "Sender";
+                        serialMessage = JSON.stringify(sessionStartMessage);
+                        sessions[sessionId].players[0].send(serialMessage);
+
+                        sessionStartMessage.sessionRole = "Saboteur";
+                        serialMessage = JSON.stringify(sessionStartMessage);
+                        sessions[sessionId].players[1].send(serialMessage);
+
+                        sessionStartMessage.sessionRole = "Receiver";
+                        serialMessage = JSON.stringify(sessionStartMessage);
+                        sessions[sessionId].players[2].send(serialMessage);
+                    } catch ( e ) {
+                        res.status(500).json( {error: e} );
+                    }
+                }
+
             } catch ( e ) {
                 console.log( e );
                 ws.send("Sorry, there was an error joining the session.");
