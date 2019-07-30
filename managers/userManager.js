@@ -24,7 +24,7 @@ const lookupUser = async playerName => {
             users.push( newPlayer );
             //TODO replace with saveUserCollection
             // optionally add device id with new player
-            return newPlayer;
+            return newPlayer.playerId;
         }
     } catch ( e ) {
         throw e;

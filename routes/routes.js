@@ -42,10 +42,11 @@ router.post( '/newPlayer', async ( req, res ) => {
 });
 
 router.ws( '/connect', async ( ws, req ) => {
+    let playerID;
     ws.send("Finding a session to join...");
 
     ws.onclose = () => {
-      sessionManager.closeSession( ws.getWSS().clients, req.body.playerId );
+      sessionManager.closeSession( ws.getWSS().clients, playerID );
     };
 
     ws.onmessage = (msg) => {
@@ -56,7 +57,7 @@ router.ws( '/connect', async ( ws, req ) => {
         {
             try {
                 console.log(request.playerId);
-                let playerID = request.playerId;
+                playerID = request.playerId;
                 let session = sessionManager.joinSession( ws, playerID );
 
                 ws.send("Connected to session");
