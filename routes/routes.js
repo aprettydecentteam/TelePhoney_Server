@@ -170,6 +170,7 @@ router.ws( '/connectdemo', async ( ws, req ) => {
 router.post( '/roledemo', ( req, res ) => {
     console.log("assigning role");
     clients[req.body.id].role = req.body.role;
+    console.log(JSON.stringify(clients[req.body.id]));
 });
 
 router.post( '/sendmessagedemo', ( req, res ) => {
@@ -263,9 +264,9 @@ router.post( '/initreceiverdemo', ( req, res ) => {
         //serialMessage = JSON.stringify(eventMessage);
 
         clients.forEach(element => {
-            console.log(element);
+            console.log(element.socket);
             if (element.role === "Receiver") {
-                element.send(eventMessage);
+                element.socket.send(eventMessage);
             }
         });
     } catch ( e ) {
