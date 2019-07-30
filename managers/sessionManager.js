@@ -18,6 +18,7 @@ const joinSession = async ( socket, playerId ) => {
             if (sessions[key].players.length < 3) {
                 sessions[key].players.push(await createPlayer(socket, playerId));
                 sessionId = key;
+                console.log("returning sessionId");
                 return sessionId;
             }
         });
@@ -93,6 +94,7 @@ const createSession = player => {
 };
 
 const createPlayer = ( socket, playerId ) => {
+    console.log("Creating player");
     let player = {};
     return player[playerId] = socket;
 };
@@ -108,5 +110,6 @@ const getSessionId = playerId => {
 
 module.exports = {
     joinSession,
-    closeSession
+    closeSession,
+    sessions
 };
