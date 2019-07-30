@@ -155,6 +155,7 @@ router.ws( '/connect', async ( ws, req ) => {
 });
 // Demo day routes
 router.ws( '/connectdemo', async ( ws, req ) => {
+    console.log("connection request");
     let client = {};
     let connectMessage = {};
     client.socket = ws;
@@ -163,6 +164,7 @@ router.ws( '/connectdemo', async ( ws, req ) => {
     clients.push(client);
     connectMessage.id = client.id;
     connectMessage.msgEvent = "connected";
+    console.log("connect message: " + connectMessage);
     ws.send(JSON.stringify(connectMessage));
 });
 
