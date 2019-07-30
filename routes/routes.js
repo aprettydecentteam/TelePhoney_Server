@@ -169,8 +169,8 @@ router.ws( '/connectdemo', async ( ws, req ) => {
 
 router.post( '/roledemo', ( req, res ) => {
     console.log("assigning role");
+    console.log("role is: " + req.body.role);
     clients[req.body.id].role = req.body.role;
-    console.log(JSON.stringify(clients[req.body.id]));
 });
 
 router.post( '/sendmessagedemo', ( req, res ) => {
