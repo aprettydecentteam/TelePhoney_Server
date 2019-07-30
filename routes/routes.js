@@ -169,10 +169,12 @@ router.ws( '/connectdemo', async ( ws, req ) => {
 });
 
 router.post( '/roledemo', async ( req, res ) => {
+    console.log("assigning role");
     clients[req.body.id].role = req.body.role;
 });
 
 router.post( '/sendmessagedemo', async ( req, res ) => {
+    console.log("sending message");
     let eventMessage = {};
     let serialMessage = "";
     let recevSocket = "";
@@ -184,6 +186,7 @@ router.post( '/sendmessagedemo', async ( req, res ) => {
         serialMessage = JSON.stringify(eventMessage);
         switch(clients[req.body.id].role) {
             case "Sender":
+                console.log("Sender sent message to Saboteur!");
                 // Send message to saboteur
                 clients.forEach(element => {
                     if(element.role === "Saboteur") {
@@ -192,6 +195,7 @@ router.post( '/sendmessagedemo', async ( req, res ) => {
                 });
                 break;
             case "Saboteur":
+                console.log("Saboteur sent message to receiver!");
                 // Send message to receiver
                 clients.forEach(element => {
                     if(element.role === "Receiver") {
@@ -202,6 +206,7 @@ router.post( '/sendmessagedemo', async ( req, res ) => {
             default:
                 console.log("Valid player role not found.");
         }
+        console.log("message sent was: " + serialMessage);
         recevSocket.send(serialMessage);
     } catch ( e ) {
         res.status(500).json( {error: e} );
@@ -209,6 +214,7 @@ router.post( '/sendmessagedemo', async ( req, res ) => {
 });
 
 router.post( '/sendguessdemo', async ( req, res ) => {
+    console.log("sending guess!");
     let eventMessage = {};
     let serialMessage = "";
     try {
@@ -227,6 +233,7 @@ router.post( '/sendguessdemo', async ( req, res ) => {
 });
 
 router.post( '/sendcorrectguessesdemo', async ( req, res ) => {
+    console.log("sending the number of correct guesses");
     let eventMessage = {};
     let serialMessage = "";
     try {
@@ -243,6 +250,7 @@ router.post( '/sendcorrectguessesdemo', async ( req, res ) => {
 });
 
 router.post( '/initreceiverdemo', async ( req, res ) => {
+    console.log("Initalizing cipher cypher");
     let eventMessage = {};
     let serialMessage = "";
     try {
@@ -262,6 +270,7 @@ router.post( '/initreceiverdemo', async ( req, res ) => {
 });
 
 router.post( '/winnerdemo', async ( req, res ) => {
+    console.log("We have a winner!");
     let eventMessage = {};
     eventMessage.mesEvent = "gameOver"
     try {
