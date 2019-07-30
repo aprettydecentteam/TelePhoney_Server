@@ -240,6 +240,25 @@ router.post( '/sendcorrectguessesdemo', async ( req, res ) => {
     }
 });
 
+router.post( '/initreceiverdemo', async ( req, res ) => {
+    let eventMessage = {};
+    let serialMessage = "";
+    try {
+        eventMessage.verbs = req.body.verbs;
+        eventMessage.nouns = req.body.nouns;
+        eventMessage.mesEvent = "initCypher";
+        serialMessage = JSON.stringify(eventMessage);
+
+        clients.forEach(element => {
+            if (element.role === "Receiver") {
+                element.ws.send(serialMessage);
+            }
+        });
+    } catch ( e ) {
+        res.status(500).json( {error: e} );
+    }
+});
+
 router.post( '/winnerdemo', async ( req, res ) => {
     let eventMessage = {};
     eventMessage.mesEvent = "gameOver"
