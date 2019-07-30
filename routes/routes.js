@@ -212,12 +212,68 @@ router.post( '/sendguessdemo', async ( req, res ) => {
     try {
         eventMessage.verbs = req.body.verbs;
         eventMessage.nouns = req.body.nouns;
+        eventMessage.role = req.body.role;
         eventMessage.mesEvent = "updateGuess";
         serialMessage = JSON.stringify(eventMessage);
 
         clients.forEach(element => {
             element.ws.send(serialMessage);
         });
+    } catch ( e ) {
+        res.status(500).json( {error: e} );
+    }
+});
+
+router.post( '/sendcorrectguessesdemo', async ( req, res ) => {
+    let eventMessage = {};
+    let serialMessage = "";
+    try {
+        eventMessage.correctGuesses = req.body.correctGuesses;
+        eventMessage.mesEvent = "correctGuesses";
+        serialMessage = JSON.stringify(eventMessage);
+
+        clients.forEach(element => {
+            element.ws.send(serialMessage);
+        });
+    } catch ( e ) {
+        res.status(500).json( {error: e} );
+    }
+});
+
+router.post( '/winnerdemo', async ( req, res ) => {
+    let eventMessage = {};
+    eventMessage.mesEvent = "gameOver"
+    try {
+        switch(req.body.role) {
+            case "Saboteur":
+                clients.forEach(element => {
+                    if(element.role === "Saboteur") {
+                        eventMessage.result = "Winner";
+                        element.ws.send(JSON.stringify(eventMessage));
+                    }
+                    else {
+                        eventMessage.result = "Loser";
+                        element.ws.send(JSON.stringify(eventMessage));
+                    }
+                });
+                break;
+            case "Sender":
+            case "Receiver":
+                clients.forEach(element => {
+                    if(element.role === "Saboteur") {
+                        eventMessage.result = "Loser";
+                        element.ws.send(JSON.stringify(eventMessage));
+                    }
+                    else {
+                        eventMessage.result = "Winner";
+                        element.ws.send(JSON.stringify(eventMessage));
+                    }
+                });
+                break;
+            default:
+                console.log("No winner?");
+                break;
+        }
     } catch ( e ) {
         res.status(500).json( {error: e} );
     }
