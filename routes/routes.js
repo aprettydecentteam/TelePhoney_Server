@@ -8,6 +8,12 @@ const _     = require('lodash'),
 const sessionManager    = require('../managers/sessionManager'),
       userManager       = require('../managers/userManager');
 
+let sessions = sessionManager.sessions;
+
+// Demo globals
+let clients = [];
+let solution = {};
+let id = 0;
 router.get( '/', ( req, res ) => {
     console.log("Ping");
     res.sendStatus(200);
@@ -90,7 +96,6 @@ router.post( '/sendMessage', async ( req, res ) => {
     }
 });
 
-let clients = [];
 router.ws( '/connect', async ( ws, req ) => {
     clients.push(ws);
     let playerID;
@@ -114,12 +119,13 @@ router.ws( '/connect', async ( ws, req ) => {
         {
             try {
                 playerID = request.playerId;
-                joinSessionMessage.sessionId = sessionManager.joinSession( ws, playerID );
+                joinSessionMessage.sessionId = await sessionManager.joinSession( ws, playerID );
+                let sessionId = joinSessionMessage.sessionId;
                 joinSessionMessage.msgEvent = "joinedSession";
                 serialMessage = JSON.stringify(joinSessionMessage);
                 ws.send( serialMessage )
 
-                if (sessions[session].players.length == 3) {
+                if (sessions[sessionId].players.length == 3) {
                     try {
                         sessionStartMessage.mesEvent = "sessionStart";
                         sessionStartMessage.sessionRole = "Sender";
@@ -134,7 +140,8 @@ router.ws( '/connect', async ( ws, req ) => {
                         serialMessage = JSON.stringify(sessionStartMessage);
                         sessions[sessionId].players[2].send(serialMessage);
                     } catch ( e ) {
-                        res.status(500).json( {error: e} );
+                        ws.send("Sorry, there was an error starting the session.");
+                        ws.terminate();
                     }
                 }
 
@@ -144,6 +151,75 @@ router.ws( '/connect', async ( ws, req ) => {
                 ws.terminate();
             }
         }
+    }
+});
+// Demo day routes
+router.ws( '/connectdemo', async ( ws, req ) => {
+    let client = {};
+    let connectMessage = {};
+    client.socket = ws;
+    client.role = "";
+    client.id = clients.length;
+    clients.push(client);
+    connectMessage.id = client.id;
+    connectMessage.msgEvent = "connected";
+    ws.send(JSON.stringify(connectMessage));
+});
+
+router.post( '/roledemo', async ( req, res ) => {
+    clients[req.body.id].role = req.body.role;
+});
+
+router.post( '/sendmessagedemo', async ( req, res ) => {
+    let eventMessage = {};
+    let serialMessage = "";
+    let recevSocket = "";
+    try {
+        eventMessage.noun = req.body.noun;
+        eventMessage.verb = req.body.verb;
+        eventMessage.step = req.body.step;
+        eventMessage.mesEvent = "sentMessage";
+        serialMessage = JSON.stringify(eventMessage);
+        switch(clients[req.body.id].role) {
+            case "Sender":
+                // Send message to saboteur
+                clients.forEach(element => {
+                    if(element.role === "Saboteur") {
+                        recevSocket = element.ws;
+                    }
+                });
+                break;
+            case "Saboteur":
+                // Send message to receiver
+                clients.forEach(element => {
+                    if(element.role === "Receiver") {
+                        recevSocket = element.ws;
+                    }
+                });
+                break;
+            default:
+                console.log("Valid player role not found.");
+        }
+        recevSocket.send(serialMessage);
+    } catch ( e ) {
+        res.status(500).json( {error: e} );
+    }
+});
+
+router.post( '/sendguessdemo', async ( req, res ) => {
+    let eventMessage = {};
+    let serialMessage = "";
+    try {
+        eventMessage.verbs = req.body.verbs;
+        eventMessage.nouns = req.body.nouns;
+        eventMessage.mesEvent = "updateGuess";
+        serialMessage = JSON.stringify(eventMessage);
+
+        clients.forEach(element => {
+            element.ws.send(serialMessage);
+        });
+    } catch ( e ) {
+        res.status(500).json( {error: e} );
     }
 });
 module.exports = router;
