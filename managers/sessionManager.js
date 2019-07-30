@@ -3,25 +3,38 @@ const uuid   = require('uuid/v4'),
       _      = require('lodash'),
       moment = require('moment');
 
-let sessions = {}; //global instance of all sessions, if the server goes down all the sessions will be closed anyways
+let sessions = {"0":{"players":[null,null,null]}}; //global instance of all sessions, if the server goes down all the sessions will be closed anyways
 
-const joinSession = ( socket, playerId ) => {
+const joinSession = async ( socket, playerId ) => {
 
     //TODO edge case where, the socket for a player wasn't closed or the session wasn't deleted.
     // check if a session already exists for a player, if the session is active close the session, as clearly
     // said player is not in it.
 
-    //is there an available session?
-    return Object.keys(sessions).forEach( key => {
-        if( sessions[key].players.length < 3 ) {
-            sessions[key].players.push( createPlayer( socket, playerId ) );
-            return key;
+    try {
+        //is there an available session?
+        let sessionId = Object.keys(sessions).forEach(async key => {
+            console.log( sessions[key].players.length + " " + key );
+            if (sessions[key].players.length < 3) {
+                sessions[key].players.push(await createPlayer(socket, playerId));
+                sessionId = key;
+                return sessionId;
+            }
+        });
+        await Promise.resolve(sessionId);
+        if( !sessionId ) {
+            console.log("Creating session ");
+            sessionId = createSession( await createPlayer(socket, playerId));
         }
-        else {
-            return createSession( createPlayer( socket, playerId ) );
-        }
-    });
+        await Promise.resolve(sessionId);
+        return sessionId;
+    }catch( e ) {
+        throw e;
+    }
 };
+
+//TODO doesn't work
+// fix
 const closeSession = async ( clients, playerId ) => {
     try {
         //does an open session exist for a player?
@@ -73,10 +86,9 @@ const createSession = player => {
     * */
     //generate a uuid once per createSession
     let sessionId = uuid();
-    sessions[sessionId].players = [];
+    sessions[sessionId] = {players:[]};
     sessions[sessionId].players.push( player );
     sessions[sessionId].created = moment().toISOString();
-
     return sessionId;
 };
 
