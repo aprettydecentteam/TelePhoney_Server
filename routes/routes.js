@@ -164,7 +164,7 @@ router.ws( '/connectdemo', async ( ws, req ) => {
     clients.push(client);
     connectMessage.id = client.id;
     connectMessage.msgEvent = "connected";
-    ws.send(JSON.stringify(connectMessage));
+    ws.send(connectMessage);
 });
 
 router.post( '/roledemo', ( req, res ) => {
