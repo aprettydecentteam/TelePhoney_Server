@@ -171,7 +171,6 @@ router.ws( '/connectdemo', async ( ws, req ) => {
 router.post( '/roledemo', ( req, res ) => {
     console.log("assigning role");
     clients[req.body.id].role = req.body.role;
-    res.status(200).json(clients[req.body.id]);
 });
 
 router.post( '/sendmessagedemo', async ( req, res ) => {
@@ -190,6 +189,7 @@ router.post( '/sendmessagedemo', async ( req, res ) => {
                 console.log("Sender sent message to Saboteur!");
                 // Send message to saboteur
                 clients.forEach(element => {
+                    console.log("element: " + element);
                     if(element.role === "Saboteur") {
                         recevSocket = element.ws;
                     }
