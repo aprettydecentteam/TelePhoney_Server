@@ -268,7 +268,7 @@ router.post( '/initreceiverdemo', ( req, res ) => {
             }
         });
     } catch ( e ) {
-        res.status(500).json( {error: e} );
+        console.log("error is: " + JSON.stringify(e));
     }
 });
 
