@@ -164,7 +164,6 @@ router.ws( '/connectdemo', async ( ws, req ) => {
     clients.push(client);
     connectMessage.id = client.id;
     connectMessage.msgEvent = "connected";
-    console.log("connect message: " + connectMessage);
     ws.send(JSON.stringify(connectMessage));
 });
 
@@ -173,7 +172,7 @@ router.post( '/roledemo', ( req, res ) => {
     clients[req.body.id].role = req.body.role;
 });
 
-router.post( '/sendmessagedemo', async ( req, res ) => {
+router.post( '/sendmessagedemo', ( req, res ) => {
     console.log("sending message");
     let eventMessage = {};
     let serialMessage = "";
@@ -214,7 +213,7 @@ router.post( '/sendmessagedemo', async ( req, res ) => {
     }
 });
 
-router.post( '/sendguessdemo', async ( req, res ) => {
+router.post( '/sendguessdemo', ( req, res ) => {
     console.log("sending guess!");
     let eventMessage = {};
     let serialMessage = "";
@@ -233,7 +232,7 @@ router.post( '/sendguessdemo', async ( req, res ) => {
     }
 });
 
-router.post( '/sendcorrectguessesdemo', async ( req, res ) => {
+router.post( '/sendcorrectguessesdemo', ( req, res ) => {
     console.log("sending the number of correct guesses");
     let eventMessage = {};
     let serialMessage = "";
@@ -250,7 +249,7 @@ router.post( '/sendcorrectguessesdemo', async ( req, res ) => {
     }
 });
 
-router.post( '/initreceiverdemo', async ( req, res ) => {
+router.post( '/initreceiverdemo', ( req, res ) => {
     console.log("Initalizing cipher cypher");
     let eventMessage = {};
     let serialMessage = "";
@@ -270,7 +269,7 @@ router.post( '/initreceiverdemo', async ( req, res ) => {
     }
 });
 
-router.post( '/winnerdemo', async ( req, res ) => {
+router.post( '/winnerdemo', ( req, res ) => {
     console.log("We have a winner!");
     let eventMessage = {};
     eventMessage.mesEvent = "gameOver"
