@@ -33,18 +33,15 @@ router.ws( '/test', ( ws, req ) => {
 
 router.post( '/newPlayer', async ( req, res ) => {
     let playerName = req.body.playerName;
-    console.log(playerName);
     try {
         let player = await userManager.lookupUser( playerName );
         res.json( player );
     } catch ( e ) {
-        console.log("Error is " + e);
         res.status(500).json( {error: e} );
     }
 });
 
 router.ws( '/connect', async ( ws, req ) => {
-    console.log("joinSession was connected to");
     ws.send("Finding a session to join...");
 
     ws.onclose = () => {
@@ -55,8 +52,6 @@ router.ws( '/connect', async ( ws, req ) => {
         //we want the playerId here because this was made by the server
         //this acts as the "authentication" in our prototype
         let request = JSON.parse(msg.data);
-        console.log("Here is the serialized message: " + msg.data);
-        console.log("Here is the JSON object: " + JSON.stringify(request));
         if (request.reqEvent = "joinSession")
         {
             try {
