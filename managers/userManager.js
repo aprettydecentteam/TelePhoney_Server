@@ -27,12 +27,12 @@ const lookupUser = async playerName => {
             return newPlayer;
         }
     } catch ( e ) {
-        throw e ;
+        throw e;
     }
 };
 
 const buildUser = playerName => {
-  return user = {
+  return {
       playerName,
       playerId: uuid(),
       created: moment().toISOString()

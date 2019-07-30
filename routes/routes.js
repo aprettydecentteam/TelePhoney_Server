@@ -32,7 +32,6 @@ router.ws( '/test', ( ws, req ) => {
 });
 
 router.post( '/newPlayer', async ( req, res ) => {
-    console.log( 'playerName', req.body.playerName );
     let playerName = req.body.playerName;
     try {
         let player = await userManager.lookupUser( playerName );
