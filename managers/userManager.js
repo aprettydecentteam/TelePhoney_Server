@@ -53,4 +53,6 @@ const buildUser = ( playerName )=> {
   };
 };
 
-module.exports = lookupUser;
+module.exports = {
+    lookupUser
+};
