@@ -178,10 +178,12 @@ router.post( '/sendmessagedemo', ( req, res ) => {
     let serialMessage = "";
     let recevSocket = "";
     try {
+        console.log("creating event message");
         eventMessage.noun = req.body.noun;
         eventMessage.verb = req.body.verb;
         eventMessage.step = req.body.step;
         eventMessage.mesEvent = "sentMessage";
+        console.log("serializing response");
         serialMessage = JSON.stringify(eventMessage);
         console.log(JSON.stringify(clients[req.body.id].role));
         switch(clients[req.body.id].role) {
